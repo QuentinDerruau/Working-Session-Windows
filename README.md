@@ -33,6 +33,7 @@ cd Working-Session-Windows
 ```
 
 mettre à jour les routes.
+changer les applications souhaités
 lancer le fichier work.bat.
 
 ## Contribution
