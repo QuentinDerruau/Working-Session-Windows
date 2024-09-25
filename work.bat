@@ -29,9 +29,6 @@ for /f "tokens=*" %%A in ('powershell -command "Get-Process | Where-Object { $_.
     )
 )
 
-:: Lancer le script chrono.bat pour afficher le chronomètre
-start "" "C:\Users\quent\Desktop\Rangement\scripts\chrono.bat"
-
 :: Lancer le script startApp.bat pour démarrer les applications spécifiées
 start "" "C:\Users\quent\Desktop\Rangement\scripts\startApp.bat"
 
