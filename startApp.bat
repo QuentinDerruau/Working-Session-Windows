@@ -84,5 +84,6 @@ for /L %%i in (0, 1, !maxIndex!) do (
 
 :: Indiquer que le script est terminé avec la date et l'heure
 echo Fin du script - %date% %time% >> "%logFile%"
-
+:: Lancer le script chrono.bat pour afficher le chronomètre
+start "" "C:\Users\quent\Desktop\Rangement\scripts\chrono.bat"
 exit
