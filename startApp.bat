@@ -22,47 +22,62 @@ set "maxIndex=-1"
 :: Boucle pour déterminer combien d'applications sont dans le tableau
 for /L %%i in (0, 1, 999) do (
     if defined apps[%%i] (
-        set /a maxIndex=%%i  :: Si l'application est définie, mettre à jour maxIndex
+         :: Si l'application est définie, mettre à jour maxIndex
+        set /a maxIndex=%%i 
     ) else (
-        goto :doneCounting  :: Sortir de la boucle si l'index n'est pas défini
+        :: Sortir de la boucle si l'index n'est pas défini
+        goto :doneCounting  
     )
 )
 :doneCounting
 
 :: Boucle à travers chaque application dans le tableau
 for /L %%i in (0, 1, !maxIndex!) do (
-    set "appPath=!apps[%%i]!"  :: Récupérer le chemin de l'application actuelle
-    echo [Index %%i] Tentative de lancement de !appPath! >> "%logFile%"  :: Log de la tentative de lancement
-    
-    set "retryCount=0"  :: Initialiser le compteur de tentatives
-    set "maxRetries=3"  :: Maximum de tentatives de lancement
+    :: Récupérer le chemin de l'application actuelle
+    set "appPath=!apps[%%i]!"  
+    :: Log de la tentative de lancement
+    echo [Index %%i] Tentative de lancement de !appPath! >> "%logFile%"  
+    :: Initialiser le compteur de tentatives
+    set "retryCount=0"  
+    :: Maximum de tentatives de lancement
+    set "maxRetries=3"  
 
     :: Extraire le nom de l'exécutable pour vérifier si le processus est en cours d'exécution
     for %%j in (!appPath!) do set "processName=%%~nj"
-
-    echo Lancement de !appPath! >> "%logFile%"  :: Log du lancement de l'application
-    powershell -Command "Start-Process '!appPath!'"  :: Lancer l'application avec PowerShell
+    :: Log du lancement de l'application
+    echo Lancement de !appPath! >> "%logFile%"  
+    :: Lancer l'application avec PowerShell
+    powershell -Command "Start-Process '!appPath!'"  
 
     :: Vérifier si l'application a été lancée avec succès
-    tasklist | findstr /I "!processName!" >nul  :: Vérifier si le processus est actif
+    :: Vérifier si le processus est actif
+    tasklist | findstr /I "!processName!" >nul  
 
     if !errorlevel! == 0 (
-        echo !appPath! lancé avec succès >> "%logFile%"  :: Log de succès
+        :: Log de succès
+        echo !appPath! lancé avec succès >> "%logFile%"  
     ) else (
-        echo Échec du lancement de !appPath! >> "%logFile%"  :: Log d'échec
+        :: Log d'échec
+        echo Échec du lancement de !appPath! >> "%logFile%"  
         :: Tenter de relancer l'application en cas d'échec
         for /L %%r in (1, 1, !maxRetries!) do (
             echo Tentative de relancer !appPath! (Essai %%r de !maxRetries!) >> "%logFile%"
-            powershell -Command "Start-Process '!appPath!'"  :: Relancer l'application
-            tasklist | findstr /I "!processName!" >nul  :: Vérifier à nouveau si le processus est actif
+            :: Relancer l'application
+            powershell -Command "Start-Process '!appPath!'"  
+            :: Vérifier à nouveau si le processus est actif
+            tasklist | findstr /I "!processName!" >nul  
             if !errorlevel! == 0 (
-                echo !appPath! lancé avec succès après relance >> "%logFile%"  :: Log de succès après relance
-                set "success=1"  :: Marquer le succès
-                break  :: Sortir de la boucle de relance
+                :: Log de succès après relance
+                echo !appPath! lancé avec succès après relance >> "%logFile%"  
+                :: Marquer le succès
+                set "success=1"  
+                :: Sortir de la boucle de relance
+                break  
             )
         )
         if !success! == 0 (
-            echo Échec du lancement de !appPath! après !maxRetries! tentatives >> "%logFile%"  :: Log d'échec final
+            :: Log d'échec final
+            echo Échec du lancement de !appPath! après !maxRetries! tentatives >> "%logFile%"  
         )
     )
 )
